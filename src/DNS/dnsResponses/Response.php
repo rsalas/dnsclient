@@ -191,6 +191,10 @@ class Response
                 $result = new \DNS\dnsData\Aresult(implode(".", unpack("Ca/Cb/Cc/Cd", $this->readResponse($buffer, 4))));
                 break;
 
+            case 'AAAA':
+                $result = new \DNS\dnsData\AAAAresult(implode(":", unpack("H4a/H4b/H4c/H4d/H4e/H4f/H4g/H4h", $this->readResponse($buffer, 16))));
+                break;
+
             case 'NS':
                 $result = new \DNS\dnsData\NSresult($this->readDomainLabel($buffer));
                 break;
@@ -201,6 +205,10 @@ class Response
 
             case 'CNAME':
                 $result = new \DNS\dnsData\CNAMEresult($this->readDomainLabel($buffer));
+                break;
+
+            case 'DNAME':
+                $result = new \DNS\dnsData\DNAMEresult($this->readDomainLabel($buffer));
                 break;
 
             case 'MX':
@@ -237,6 +245,7 @@ class Response
                 $result = new \DNS\dnsData\DSresult($stuff['keytag'], $stuff['algo'], $stuff['digest'], $stuff['string'], $stuff['rest']);
                 break;
 
+            case 'KEY':
             case 'DNSKEY':
                 $stuff = $this->readResponse($buffer, $ans_header['length']);
                 $this->keytag($stuff, $ans_header['length']);
@@ -251,6 +260,17 @@ class Response
                 if ($flags{15} == '1') {
                     $result->setSep(true);
                 }
+                break;
+
+            case 'SRV':
+                $result = new \DNS\dnsData\SRVresult();
+                $stuff = $this->readResponse($buffer, 6);
+                $extras = unpack("npriority/nweight/nport", $stuff);
+                $result->setPriority($extras['priority']);
+                $result->setWeight($extras['weight']);
+                $result->setPort($extras['port']);
+                $data = $this->readDomainLabel($buffer);
+                $result->setData($data);
                 break;
 
             case 'RRSIG':

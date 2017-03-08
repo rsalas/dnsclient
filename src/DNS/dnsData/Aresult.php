@@ -3,7 +3,7 @@ namespace DNS\dnsData;
 
 class Aresult extends Result
 {
-    private $_ipv4;
+    private $ipv4;
 
     public function __construct($ip)
     {
@@ -13,11 +13,11 @@ class Aresult extends Result
 
     public function setIpv4($ip)
     {
-        $this->_ipv4 = $ip;
+        $this->ipv4 = $ip;
     }
 
     public function getIpv4()
     {
-        return $this->_ipv4;
+        return $this->ipv4;
     }
 }

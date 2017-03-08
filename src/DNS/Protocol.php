@@ -56,7 +56,7 @@ class Protocol
         $this->udp=false;
         $this->types=new dnsData\Types();
         set_error_handler(array($this,'errorHandler'));
-        $this->writelog("dnsProtocol Class Initialised");
+        $this->writeLog("dnsProtocol Class Initialised");
     }
 
     public function __destruct()
@@ -148,7 +148,7 @@ class Protocol
         if ($this->udp) {// UDP method
             if (!fwrite($socket, $header, $headersize)) {
                 fclose($socket);
-                throw new dnsData\xception("Failed to write question to socket");
+                throw new dnsData\Exception("Failed to write question to socket");
             }
 
             if (!$this->rawbuffer=fread($socket, 4096)) { // read until the end with UDP
@@ -271,10 +271,11 @@ class Protocol
         }
     }
 
-    private function _writeLog($text)
+    private function writeLog($text)
     {
         if ($this->logging) {
             $this->logentries[] = "-----".date("Y-m-d H:i:s")."-----".$text."-----";
+            print "-----".date("Y-m-d H:i:s")."-----".$text."-----";
         }
     }
 
